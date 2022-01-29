@@ -7,6 +7,8 @@ import path from 'path';
 import fs from 'fs';
 import App from './src/App';
 
+global.window = {};
+
 const app = express();
 
 app.use(express.static('./build', { index: false }));
@@ -39,8 +41,10 @@ app.get('/*', (req, res) => {
       return res.status(500).send(err);
     }
 
+    const loadedArticles = articles;
+
     return res.send(
-      data.replace('<div id="root"></div>', `<div id="root">${reactApp}</div>`)
+      data.replace('<div id="root"></div>', `<script>window.preloadedArticles = ${JSON.stringify(loadedArticles)};</script><div id="root">${reactApp}</div>`)
           .replace('{{ styles }}', sheet.getStyleTags())
     )
   });
